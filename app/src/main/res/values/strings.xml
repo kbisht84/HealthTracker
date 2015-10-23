@@ -8,5 +8,13 @@
     <string name="email_error">Email already exits</string>
     <string name="acknowledge">Okay</string>
     <string name="cancel">Cancel</string>
-    <string name="title_activity_landing">Landing</string>
+    <string name="title_activity_landing">Home</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">hello</string>
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+
+    </string-array>
+
 </resources>

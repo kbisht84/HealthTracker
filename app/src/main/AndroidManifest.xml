@@ -36,6 +36,7 @@
             android:name=".Landing"
             android:label="@string/title_activity_landing"
             android:theme="@style/AppTheme.NoActionBar" >
+
         </activity>
     </application>
 

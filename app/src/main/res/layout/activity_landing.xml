@@ -1,25 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:fitsSystemWindows="true"
     tools:context="com.kanakb.healthtracker.Landing">
 
-    <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
-            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" app:popupTheme="@style/AppTheme.PopupOverlay" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/editText8"
+        android:layout_marginTop="143dp"
+        android:layout_marginRight="45dp"
+        android:layout_marginEnd="45dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:hint="ft.inch" />
 
-    </android.support.design.widget.AppBarLayout>
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/editText9"
+        android:layout_below="@+id/editText8"
+        android:layout_alignLeft="@+id/editText8"
+        android:layout_alignStart="@+id/editText8"
+        android:layout_marginTop="40dp"
+        android:hint="lbs" />
 
-    <include layout="@layout/content_landing" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Height"
+        android:id="@+id/height"
+        android:layout_alignBottom="@+id/editText8"
+        android:layout_toLeftOf="@+id/editText8"
+        android:layout_toStartOf="@+id/editText8" />
 
-    <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Weight"
+        android:id="@+id/weight"
+        android:layout_alignTop="@+id/editText9"
+        android:layout_alignLeft="@+id/height"
+        android:layout_alignStart="@+id/height" />
 
-</android.support.design.widget.CoordinatorLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Age"
+        android:id="@+id/age"
+        android:layout_alignTop="@+id/editText10"
+        android:layout_alignLeft="@+id/weight"
+        android:layout_alignStart="@+id/weight" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/editText10"
+        android:layout_below="@+id/editText9"
+        android:layout_toRightOf="@+id/height"
+        android:layout_toEndOf="@+id/height"
+        android:layout_marginTop="38dp"
+        android:hint="yrs" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_below="@+id/editText10"
+        android:layout_alignLeft="@+id/age"
+        android:layout_alignStart="@+id/age"
+        android:layout_marginTop="42dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calories"
+        android:id="@+id/button5"
+        android:layout_below="@+id/spinner"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="How Much Calories should I take?"
+        android:id="@+id/textView9"
+        android:layout_above="@+id/height"
+        android:layout_toEndOf="@+id/age"
+        android:layout_marginBottom="40dp"
+        android:layout_alignLeft="@+id/height"
+        android:layout_alignStart="@+id/height" />
+
+</RelativeLayout>
