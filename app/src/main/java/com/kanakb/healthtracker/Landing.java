@@ -20,7 +20,6 @@ import de.congrace.exp4j.ExpressionBuilder;
 
 public class Landing extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private static final String gender=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +45,7 @@ public class Landing extends AppCompatActivity implements AdapterView.OnItemSele
 
     }
 
-    public Double calorieCounter(double weight,double height,int age){
+    public Double calorieCounter(double weight,double height,int age,String gender){
             Double  result=null;
         try {
 
