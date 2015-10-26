@@ -12,13 +12,11 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/editText8"
-        android:layout_marginTop="143dp"
-        android:layout_marginRight="45dp"
-        android:layout_marginEnd="45dp"
+        android:layout_marginTop="56dp"
+        android:hint="ft.inch"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:hint="ft.inch" />
+        android:layout_alignLeft="@+id/button5"
+        android:layout_alignStart="@+id/button5" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -81,12 +79,13 @@
         android:layout_below="@+id/editText10"
         android:layout_alignLeft="@+id/age"
         android:layout_alignStart="@+id/age"
-        android:layout_marginTop="42dp" />
+        android:layout_marginTop="42dp"
+        android:spinnerMode="dialog" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Calories"
+        android:text="BMI"
         android:id="@+id/button5"
         android:layout_below="@+id/spinner"
         android:layout_centerHorizontal="true" />
@@ -95,12 +94,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="How Much Calories should I take?"
-        android:id="@+id/textView9"
-        android:layout_above="@+id/height"
-        android:layout_toEndOf="@+id/age"
-        android:layout_marginBottom="40dp"
-        android:layout_alignLeft="@+id/height"
-        android:layout_alignStart="@+id/height" />
+        android:id="@+id/textView10"
+        android:layout_below="@+id/button5"
+        android:layout_toRightOf="@+id/age"
+        android:layout_marginTop="44dp" />
 
 </RelativeLayout>
