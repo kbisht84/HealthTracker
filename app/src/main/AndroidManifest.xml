@@ -36,7 +36,14 @@
             android:name=".Landing"
             android:label="@string/title_activity_landing"
             android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".Search"
 
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".SearchResults">
         </activity>
     </application>
 
