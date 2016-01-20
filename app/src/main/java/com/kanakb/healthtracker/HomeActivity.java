@@ -20,6 +20,14 @@ public class HomeActivity extends AppCompatActivity {
         Intent intent=new Intent(this,SignIn.class);
         startActivity(intent);
     }
+
+    public void search(View view){
+        Intent intent=new Intent(this,Search.class);
+        startActivity(intent);
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
