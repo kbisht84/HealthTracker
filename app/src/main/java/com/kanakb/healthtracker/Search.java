@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.MatrixCursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -11,61 +13,81 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Search extends AppCompatActivity {
 
-    private ListView mDrawerList;
+    private ListView listView;
     private Menu menu;
+    private ArrayList<String> items;
     private NavigationView nvDrawer;
-    private SearchView  searchView;
+    private SearchView searchView;
     private ArrayAdapter<String> mAdapter;
 
     private ActionBarDrawerToggle drawerToggle;
     private String mActivityTitle;
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
+    private CustomAdapter aptr;
+    String[] teams = {"Man utd", "Man city", "Chelsea", "Arsenal", "Liverpool", "TottemHam"};
 
-
+    ArrayAdapter<String>adapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_search);
-         toolbar = (Toolbar) findViewById(R.id.toolbar);
-         setSupportActionBar(toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        mDrawer = (DrawerLayout)findViewById(R.id.drawer_layout);
-       //Menu Drawer
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //Menu Drawer
         //drawerToggle = setupDrawerToggle();
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        //listView = (ListView) findViewById(R.id.listView);
 
+
+        //listView.setAdapter(adapter);
+        items=new ArrayList<>();
+        items.add("Man utd");
+        items.add("Man city");
+        items.add("Chelsea");
+        items.add("Arsenal");
+        items.add("Liverpool");
+        items.add("TottemHam");
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, teams);
         setupDrawer();
         // Setup drawer view
         setupDrawerContent(nvDrawer);
 
 
-
-   }
+    }
 
 
     private void setupDrawer() {
 
-        drawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close) {
+        drawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
             @Override
             public void onDrawerStateChanged(int newState) {
@@ -126,31 +148,29 @@ public class Search extends AppCompatActivity {
         try {
 
 
+            Fragment fragment = null;
 
-        Fragment fragment =null;
-
-        Class fragmentClass;
-        switch(menuItem.getItemId()) {
-            case R.id.nav_first_fragment:
-                fragmentClass = FirstFragment.class;
-                break;
-            case R.id.nav_second_fragment:
-                fragmentClass = SecondFragment.class;
-                break;
-            case R.id.nav_third_fragment:
-                fragmentClass = ThirdFragment.class;
-                break;
-            default:
-                fragmentClass = FirstFragment.class;
-        }
+            Class fragmentClass;
+            switch (menuItem.getItemId()) {
+                case R.id.nav_first_fragment:
+                    fragmentClass = FirstFragment.class;
+                    break;
+                case R.id.nav_second_fragment:
+                    fragmentClass = SecondFragment.class;
+                    break;
+                case R.id.nav_third_fragment:
+                    fragmentClass = ThirdFragment.class;
+                    break;
+                default:
+                    fragmentClass = FirstFragment.class;
+            }
             fragment = (Fragment) fragmentClass.newInstance();
 
 
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
+            // Insert the fragment by replacing any existing fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
 
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
 
         } catch (Exception e) {
@@ -191,14 +211,15 @@ public class Search extends AppCompatActivity {
     }
 
 
-
-
-
     //Search TextField
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater=getMenuInflater();
+        MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_search, menu);
+        this.menu = menu;
+//        MenuItem searchItem = menu.findItem(R.id.menu_search);
+//        SearchView searchView =
+//                (SearchView) MenuItemCompat.getActionView(searchItem);
 
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -207,11 +228,39 @@ public class Search extends AppCompatActivity {
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
+        String[] columns = new String[]{"_id", "text"};
+        Object[] temp = new Object[] { 0, "default" };
+        final MatrixCursor cursor = new MatrixCursor(columns);
+        for (int i = 0; i < items.size(); i++) {
+            temp[0] = i;
+            temp[1] = items.get(i);
+            cursor.addRow(temp);
+        }
+        aptr = new CustomAdapter(Search.this, cursor, items);
+        searchView.setSuggestionsAdapter(aptr);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String arg0) {
+                aptr.getFilter().filter(arg0.toString());
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String arg0) {
+                if (!TextUtils.isEmpty(arg0)) {
+                    aptr.getFilter().filter(arg0.toString());
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
         return true;
     }
-
-
-
 
 
 }
