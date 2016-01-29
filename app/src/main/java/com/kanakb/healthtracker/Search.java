@@ -1,39 +1,36 @@
 package com.kanakb.healthtracker;
 
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
-import android.database.MatrixCursor;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
+
+import com.kanakb.healthtracker.ApiClient.BookClient;
+import com.kanakb.healthtracker.Model.Book;
+import com.kanakb.healthtracker.adapter.BookAdapter;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class Search extends AppCompatActivity {
 
@@ -41,15 +38,20 @@ public class Search extends AppCompatActivity {
     private Menu menu;
     private ArrayList<String> items;
     private NavigationView nvDrawer;
-    private SearchView searchView;
+
     private ArrayAdapter<String> mAdapter;
+
+    private ListView lvBooks;
+    private BookAdapter bookAdapter;
+    private ProgressBar progress;
 
     private ActionBarDrawerToggle drawerToggle;
     private String mActivityTitle;
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     private CustomAdapter aptr;
-    String[] teams = {"Man utd", "Man city", "Chelsea", "Arsenal", "Liverpool", "TottemHam"};
+
+    private BookClient client;
 
     ArrayAdapter<String>adapter;
 
@@ -58,15 +60,23 @@ public class Search extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_search);
+
+        progress = (ProgressBar) findViewById(R.id.progress);
+
+        lvBooks = (ListView) findViewById(R.id.lvBooks);
+
+        ArrayList<Book> aBooks = new ArrayList<>();
+        bookAdapter = new BookAdapter(this, aBooks);
+        lvBooks.setAdapter(bookAdapter);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         //Menu Drawer
         //drawerToggle = setupDrawerToggle();
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         //listView = (ListView) findViewById(R.id.listView);
-
 
         //listView.setAdapter(adapter);
         items=new ArrayList<>();
@@ -76,12 +86,43 @@ public class Search extends AppCompatActivity {
         items.add("Arsenal");
         items.add("Liverpool");
         items.add("TottemHam");
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, teams);
         setupDrawer();
         // Setup drawer view
         setupDrawerContent(nvDrawer);
 
 
+    }
+
+    private void fetchBooks(String query) {
+
+        progress.setVisibility(ProgressBar.VISIBLE);
+        client = new BookClient();
+        client.getBooks(query, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    JSONArray docs = null;
+                    if(response != null) {
+                        // Get the docs json array
+                        docs = response.getJSONArray("docs");
+                        // Parse json array into array of model objects
+                        final ArrayList<Book> books = Book.fromJson(docs);
+                        // Remove all books from the adapter
+                        bookAdapter.clear();
+                        // Load model objects into the adapter
+                        for (Book book : books) {
+                            bookAdapter.add(book); // add book through the adapter
+                        }
+                        bookAdapter.notifyDataSetChanged();
+                    }
+                } catch (JSONException e) {
+                    // Invalid JSON format, show appropriate error.
+                    e.printStackTrace();
+                }
+            }
+
+
+        });
     }
 
 
@@ -211,56 +252,86 @@ public class Search extends AppCompatActivity {
     }
 
 
+
+
     //Search TextField
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_search, menu);
         this.menu = menu;
-//        MenuItem searchItem = menu.findItem(R.id.menu_search);
-//        SearchView searchView =
-//                (SearchView) MenuItemCompat.getActionView(searchItem);
+        final MenuItem searchItem = menu.findItem(R.id.menu_search);
+        final SearchView searchView =
+                (SearchView) MenuItemCompat.getActionView(searchItem);
 
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView =
-                (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
+//        SearchManager searchManager =
+//                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        searchView =
+//                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+//        searchView.setSearchableInfo(
+//                searchManager.getSearchableInfo(getComponentName()));
+//
+//        String[] columns = new String[]{"_id", "text"};
+//        Object[] temp = new Object[] { 0, "default" };
+//        final MatrixCursor cursor = new MatrixCursor(columns);
+//        for (int i = 0; i < items.size(); i++) {
+//            temp[0] = i;
+//            temp[1] = items.get(i);
+//            cursor.addRow(temp);
+//        }
+//        aptr = new CustomAdapter(Search.this, cursor, items);
+//        searchView.setSuggestionsAdapter(aptr);
 
-        String[] columns = new String[]{"_id", "text"};
-        Object[] temp = new Object[] { 0, "default" };
-        final MatrixCursor cursor = new MatrixCursor(columns);
-        for (int i = 0; i < items.size(); i++) {
-            temp[0] = i;
-            temp[1] = items.get(i);
-            cursor.addRow(temp);
-        }
-        aptr = new CustomAdapter(Search.this, cursor, items);
-        searchView.setSuggestionsAdapter(aptr);
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String s) {
+//                if (s.length() > 2)
+//                    aptr.getFilter().filter(s.toString());
+//
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String arg0) {
+//                if (!TextUtils.isEmpty(arg0)) {
+//                    aptr.getFilter().filter(arg0.toString());
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
             @Override
-            public boolean onQueryTextSubmit(String arg0) {
-                aptr.getFilter().filter(arg0.toString());
-
+            public boolean onQueryTextSubmit(String query) {
+                // Fetch the data remotely
+                fetchBooks(query);
+                // Reset SearchView
+                searchView.clearFocus();
+                searchView.setQuery("", false);
+                searchView.setIconified(true);
+                searchItem.collapseActionView();
+                // Set activity title to search query
+                Search.this.setTitle(query);
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String arg0) {
-                if (!TextUtils.isEmpty(arg0)) {
-                    aptr.getFilter().filter(arg0.toString());
-                    return true;
-                }
+            public boolean onQueryTextChange(String s) {
                 return false;
             }
         });
 
 
+
         return true;
     }
+
+
+
+
+
 
 
 }
