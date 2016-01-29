@@ -24,7 +24,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
         public ImageView ivCover;
         public TextView tvTitle;
         public TextView tvAuthor;
-    }
+     }
 
     public BookAdapter(Context context, ArrayList<Book> aBooks) {
         super(context, 0, aBooks);
